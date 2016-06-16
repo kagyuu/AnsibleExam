@@ -1,0 +1,11 @@
+{# Comment #}
+Hello Template
+
+key1 = {{ key1 }}
+key2 = {{ key2 }}
+
+{% set cnt = 1 %}
+{% for item in items %}
+{{cnt}} = {{ item }}
+{%- set cnt = cnt + 2 %}
+{%- endfor %}

@@ -1,0 +1,20 @@
+- name: Configure gitlab
+  hosts: testserver
+  become: True
+  tasks:
+
+    - name: Add repository
+      yum_repository:
+        name: epel
+        description: EPEL YUM repo
+        baseurl: http://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+    - name: Add gpg key of EPEL
+      rpm_key: key=https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 state=present
+
+    - name: Install nginx
+      yum: name=nginx state=latest
+
+    - name: start nginx
+      service: name=nginx enabled=Yes state=started
+
