@@ -1,4 +1,4 @@
-- name: Configure gitlab
+- name: Configure nginx
   hosts: testserver
   become: True
   tasks:
@@ -14,6 +14,15 @@
 
     - name: Install nginx
       yum: name=nginx state=latest
+
+    - name: copy nginx config file
+      copy: src=files/nginx/site-ansible.conf dest=/etc/nginx/default.d/
+
+    - name: Creates /ansible site directory
+      file: path=/var/www/ansible state=directory owner=nginx group=nginx mode=0775
+
+    - name: copy index.html
+      template: src=templates/index.html.j2 dest=/var/www/ansible/index.html
 
     - name: start nginx
       service: name=nginx enabled=Yes state=started
