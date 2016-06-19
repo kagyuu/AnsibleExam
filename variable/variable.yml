@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  gather_facts: yes
+  vars:
+    key1: value1
+    key2: value2
+  vars_files:
+    - extra_vars.yml
+
+  tasks:
+
+    - name: echo local vars
+      debug:
+        msg: |
+          key1 = {{ key1 }}
+          key2 = {{ key2 }}
+
+    - name: echo extra vars
+      debug:
+        msg: |
+          exKey1 = {{ exKey1 }}
+          exKey2 = {{ exKey2 }}
+
+    - name: echo extra vars
+      debug:
+        msg: |
+          pKey1 = {{ pKey1 }}
+          pKey2 = {{ pKey2 }}
+
+    - name: template
+      template: src=templates/template.txt.j2 dest=/tmp/template.txt
