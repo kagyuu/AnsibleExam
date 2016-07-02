@@ -1,0 +1,61 @@
+- name: Configure gitlab
+  hosts: testserver
+  become: True
+  gather_facts: False
+  tasks:
+
+    - name: Add EPEL repository
+      yum_repository:
+        name: epel
+        description: EPEL YUM repo
+        baseurl: http://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+    - name: Add gpg key of EPEL
+      rpm_key: key=https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 state=present
+
+    - name: Install Services
+      yum: name={{ item }}  state=present
+      with_items:
+        - curl
+        - policycoreutils
+        - openssh-server
+        - openssh-clients
+        - postfix
+        - firewalld
+
+    - name: Start Services
+      service: name={{ item }} enabled=Yes state=started
+      with_items:
+        - sshd
+        - postfix
+        - firewalld
+
+    - name: Setup Firewall
+      firewalld: permanent=True service={{ item }} state=enabled permanent=yes
+      with_items:
+        - http
+        - https
+      notify: Reload firewall
+
+#    - name: Register gitlab-ce yum repo
+#      shell: curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+#      args:
+#         creates: /etc/yum.repos.d/gitlab_gitlab-ce.repo
+#
+#    - name: Install Gitlab-CE
+#      yum: name=gitlab-ce  state=present
+
+    - name: Copy Gitlab-CE
+      copy: src=files/gitlab/gitlab-ce-8.9.3-ce.0.el7.x86_64.rpm dest=/tmp/
+
+    - name: Install Gitlab-CE
+      yum: name=/tmp/gitlab-ce-8.9.3-ce.0.el7.x86_64.rpm state=present
+
+    - name: Configure Gitlab-CE
+      command: gitlab-ctl reconfigure
+
+  handlers:
+
+    - name: Reload firewall
+      service: name=firewalld state=reloaded
+
