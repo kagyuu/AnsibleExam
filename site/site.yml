@@ -1,0 +1,17 @@
+---
+- name: Gitlab Server
+  hosts: gitlab
+  become: yes
+  roles:
+    - common
+    - gitlab
+
+- name: Redmine Server
+  hosts: redmine
+  become: yes
+  roles:
+    - common
+    - ruby
+    - postgres
+    - redmine
+    - passenger

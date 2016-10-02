@@ -1,0 +1,11 @@
+---
+- name: Register gitlab-ce yum repo
+  shell: curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+  args:
+    creates: /etc/yum.repos.d/gitlab_gitlab-ce.repo
+
+- name: Install Gitlab-CE
+  yum: name=gitlab-ce state=present
+
+- name: Configure Gitlab-CE
+  command: gitlab-ctl reconfigure

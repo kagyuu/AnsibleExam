@@ -1,0 +1,16 @@
+---
+- name: install farend_basic theme
+  git:
+    repo=https://github.com/farend/redmine_theme_farend_basic.git
+    dest={{ redmine_dir }}/public/themes/farend_basic
+
+- name: install gitmike theme
+  git:
+    repo=https://github.com/makotokw/redmine-theme-gitmike.git
+    dest={{ redmine_dir }}/public/themes/gitmike
+
+- name: install circle theme
+  unarchive: 
+    src=https://www.redminecrm.com/license_manager/29210/circle_theme-2_1_0.zip
+    dest={{ redmine_dir }}/public/themes
+    copy=no

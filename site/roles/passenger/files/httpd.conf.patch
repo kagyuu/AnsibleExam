@@ -1,0 +1,5 @@
+119c119,120
+< DocumentRoot "/var/www/html"
+---
+> #DocumentRoot "/var/www/html"
+> DocumentRoot "/var/lib/redmine/public"

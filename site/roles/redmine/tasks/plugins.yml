@@ -1,0 +1,53 @@
+---
+# OAuth
+# - name: install oauth_provider plugin
+#  git:
+#    repo=https://github.com/suer/redmine_oauth_provider
+#    dest={{ redmine_dir }}/plugins/oauth_provider
+
+# RM+ common lib
+- name: install a_common_libs plugin
+  git:
+    repo=https://bitbucket.org/dkuk/a_common_libs.git
+    dest={{ redmine_dir }}/plugins/a_common_libs
+
+# [TODO] RM+ Userbility
+# [TODO] RM+ Custom Menu
+# [TODO] Redmine Time Logger plugin
+# [TODO] Redmine Default Custom Query
+# [TODO] Redmine Issue Templates plugin
+# [TODO] Easy Gantt
+# [TODO] Knowledgebase
+
+- name: install plugin gems
+  command:
+    bundle install --no-deployment
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
+- name: update gems
+  command:
+    bundle update
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
+- name: migrate redmine-database
+  command:
+    bundle exec rake db:migrate
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
+- name: migrate plugins-database
+  command:
+    bundle exec rake redmine:plugins:migrate
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+ 

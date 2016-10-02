@@ -1,0 +1,28 @@
+---
+- name: Set initial settings
+  command:
+    bundle exec rails r '{{ item }}'
+    chdir={{ redmine_dir }}
+  with_items:
+    # Japanese
+    - 'Setting["default_language"]="ja"'
+    - 'Setting["user_format"]="lastname_firstname"'
+    - 'Setting["repositories_encodings"]="UTF-8,CP932,EUC-JP"'
+    # Default Theme
+    - 'Setting["ui_theme"]="gitmike"'
+    - 'Setting["thumbnails_enabled"]="1"'
+    # REST API
+    - 'Setting["rest_api_enabled"]="1"'
+    # Login
+    - 'Setting["login_required"]="1"'
+    - 'Setting["autologin"]="1"'
+    - 'Setting["lost_password"]="1"'
+    # User Registration
+    - 'Setting["self_registration"]="0"'
+    - 'Setting["password_min_length"]="8"'
+    # Project
+    - 'Setting["default_projects_public"]="0"'
+    - 'Setting["unsubscribe"]="1"'
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production

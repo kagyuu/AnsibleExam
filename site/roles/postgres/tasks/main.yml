@@ -1,0 +1,62 @@
+# postgresql-server : dbms
+# python-psycopg2 : ansible postgres* modules needs psycopg2
+- name: Install PostgreSQL
+  yum: name="{{ item }}" state=present
+  with_items:
+    - "postgresql-server"
+    - "python-psycopg2"
+
+- name: PostgreSQL initdb
+  command:
+    postgresql-setup initdb
+  register:
+    initdb_result
+  failed_when: initdb_result.rc not in [0, 1]
+  changed_when: initdb_result.rc == 0
+
+- name: Check whether pg_hba.conf contains "redmine"
+  command:
+    grep redmine /var/lib/pgsql/data/pg_hba.conf
+  register:
+    check_redmine
+  failed_when: check_redmine.rc not in [0, 1]
+  changed_when: False
+
+# To Create the patch file:
+# 1. login remote redmine server
+# 2. backup pg_hba.conf to hba.conf.org
+# 3. change pg_hba.conf
+# 4. exit redmine server to ansible host
+# 5. run remote diff command from ansible host
+#    $ vagrant ssh redmine -- sudo diff /var/lib/pgsql/data/pg_hba.conf.org /var/lib/pgsql/data/pg_hba.conf > pg_hba.conf.patch
+- name: apply patch to /var/lib/pgsql/data/pg_hba.conf
+  sudo: yes
+  sudo_user: postgres
+  patch: >
+    src=pg_hba.conf.patch
+    dest=/var/lib/pgsql/data/pg_hba.conf
+    backup=yes
+  when: check_redmine.rc == 1
+
+- name: PostgreSQL service setup
+  service:
+    name=postgresql
+    state=restarted
+    enabled=yes
+
+- name: Create redmine user
+  sudo: yes
+  sudo_user: postgres
+  postgresql_user:
+    name=redmine
+    password={{ db_passwd_redmine }}
+
+- name: Create redmine db
+  sudo: yes
+  sudo_user: postgres
+  postgresql_db:
+    name=redmine
+    encoding='UTF-8'
+    lc_collate='ja_JP.UTF-8'
+    lc_ctype='ja_JP.UTF-8'
+    template='template0'

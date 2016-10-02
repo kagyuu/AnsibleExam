@@ -1,0 +1,73 @@
+---
+- name: Install Apache
+  yum: name="{{ item }}" state=present
+  with_items:
+    - "httpd"
+
+- name: Check whether passenger was installed or not
+  stat: path=/usr/local/bin/passenger-install-apache2-module
+  register: passenger
+
+- name: Install Passenger
+  gem:
+    name=passenger
+    user_install=no
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  when: not passenger.stat.exists    
+
+- name: Install Apache module for Passenger
+  command:
+    passenger-install-apache2-module --auto
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  when: not passenger.stat.exists    
+
+- name: Get snippet of redmine.conf
+  command:
+    passenger-install-apache2-module --snippet
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  register:
+    passenger_snippet_vars
+  changed_when: false
+
+- name: Create redmine.conf
+  template:
+    src=redmine.conf
+    dest=/etc/httpd/conf.d/redmine.conf
+
+- name: Change owner of /var/lib/redmine apache:apache 
+  file:
+    path=/var/lib/redmine state=directory
+    owner=apache group=apache
+    recurse=yes
+
+- name: Check whether httpd.conf contains "redmine"
+  command:
+    grep redmine /etc/httpd/conf/httpd.conf
+  register:
+    check_redmine
+  failed_when: check_redmine.rc not in [0, 1]
+  changed_when: False
+  
+# To Create the patch file:
+# 1. login remote redmine server
+# 2. backup httpd.conf to httpd.conf.org
+# 3. change httpd.conf
+# 4. exit redmine server to ansible host
+# 5. run remote diff command from ansible host
+#    $ vagrant ssh redmine -- sudo diff /etc/httpd/conf/httpd.conf.org /etc/httpd/conf/httpd.conf > httpd.conf.patch
+- name: apply patch to /etc/httpd/conf/httpd.conf
+  patch: >
+    src=httpd.conf.patch
+    dest=/etc/httpd/conf/httpd.conf
+    backup=yes
+  when: check_redmine.rc == 1
+
+- name: Restart apache
+  service:
+    name=httpd
+    state=restarted
+    enabled=yes
+
