@@ -17,6 +17,9 @@
     - libselinux-python
     - tree
     - htop
+    - avahi
+    - avahi-tools
+    - nss-mdns
 
 - name: Disable SELinux
   selinux: state=disabled
@@ -49,13 +52,14 @@
     - sshd
     - postfix
     - firewalld
+    - avahi-daemon
     
 - name: Setup firewalld
   firewalld: permanent=True service={{ item }} state=enabled permanent=yes
   with_items:
-    - ssh
     - http
     - https
+    - mdns
   notify: Reload firewall
 
 # Workaround for ansible 2.1 : handler in role not work

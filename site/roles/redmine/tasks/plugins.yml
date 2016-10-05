@@ -6,10 +6,25 @@
 #    dest={{ redmine_dir }}/plugins/oauth_provider
 
 # RM+ common lib
-- name: install a_common_libs plugin
+- name: install RM+ a_common_libs plugin
   git:
     repo=https://bitbucket.org/dkuk/a_common_libs.git
     dest={{ redmine_dir }}/plugins/a_common_libs
+
+- name: install favourite_projects plugin
+  git:
+    repo=https://github.com/syntacticvexation/redmine_favourite_projects.git
+    dest={{ redmine_dir }}/plugins/favourite_projects
+
+- name: install omniauth_saml plugin
+  git:
+    repo=https://github.com/chrodriguez/redmine_omniauth_saml.git
+    dest={{ redmine_dir }}/plugins/omniauth_saml
+    
+#- name: install knowledgebase plugin
+#  git:
+#    repo=https://github.com/alexbevi/redmine_knowledgebase.git
+#    dest={{ redmine_dir }}plugins/redmine_knowledgebase
 
 # [TODO] RM+ Userbility
 # [TODO] RM+ Custom Menu

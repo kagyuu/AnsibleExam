@@ -37,12 +37,6 @@
     src=redmine.conf
     dest=/etc/httpd/conf.d/redmine.conf
 
-- name: Change owner of /var/lib/redmine apache:apache 
-  file:
-    path=/var/lib/redmine state=directory
-    owner=apache group=apache
-    recurse=yes
-
 - name: Check whether httpd.conf contains "redmine"
   command:
     grep redmine /etc/httpd/conf/httpd.conf
