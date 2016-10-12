@@ -1,30 +1,35 @@
 ---
-# OAuth
-# - name: install oauth_provider plugin
-#  git:
-#    repo=https://github.com/suer/redmine_oauth_provider
-#    dest={{ redmine_dir }}/plugins/oauth_provider
-
 # RM+ common lib
 - name: install RM+ a_common_libs plugin
   git:
     repo=https://bitbucket.org/dkuk/a_common_libs.git
     dest={{ redmine_dir }}/plugins/a_common_libs
 
-- name: install favourite_projects plugin
+# we must install this plugin to the directory "/plugins/redmine_knowledgebase" exactly.
+- name: install knowledgebase plugin
   git:
-    repo=https://github.com/syntacticvexation/redmine_favourite_projects.git
-    dest={{ redmine_dir }}/plugins/favourite_projects
+    repo=https://github.com/alexbevi/redmine_knowledgebase.git
+    dest={{ redmine_dir }}/plugins/redmine_knowledgebase
 
-- name: install omniauth_saml plugin
+- name: install backlogs plugin for redmine 3
   git:
-    repo=https://github.com/chrodriguez/redmine_omniauth_saml.git
-    dest={{ redmine_dir }}/plugins/omniauth_saml
-    
-#- name: install knowledgebase plugin
-#  git:
-#    repo=https://github.com/alexbevi/redmine_knowledgebase.git
-#    dest={{ redmine_dir }}plugins/redmine_knowledgebase
+    repo=https://github.com/backlogs/redmine_backlogs.git
+    version=origin/feature/redmine3
+    dest={{ redmine_dir }}/plugins/redmine_backlogs
+    force=yes
+
+# To Create the patch file:
+# 1. login remote redmine server
+# 2. backup Gemfile to Gemfile.org
+# 3. change Gemfile
+# 4. exit redmine server to ansible host
+# 5. run remote diff command from ansible host
+#    $ vagrant ssh redmine -- sudo diff /var/lib/redmine/plugins/redmine_backlogs/Gemfile.org /var/lib/redmine/plugins/redmine_backlogs/Gemfile
+- name: apply patch to /var/lib/redmine/plugins/redmine_backlogs/Gemfile
+  patch: >
+    src=backlogs_Gemfile.diff
+    dest=/var/lib/redmine/plugins/redmine_backlogs/Gemfile
+    backup=yes
 
 # [TODO] RM+ Userbility
 # [TODO] RM+ Custom Menu
@@ -32,7 +37,6 @@
 # [TODO] Redmine Default Custom Query
 # [TODO] Redmine Issue Templates plugin
 # [TODO] Easy Gantt
-# [TODO] Knowledgebase
 
 - name: install plugin gems
   command:

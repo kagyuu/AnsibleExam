@@ -28,6 +28,7 @@
     url: https://cache.ruby-lang.org/pub/ruby/2.3/{{ ruby_version }}.tar.gz
     dest: "{{ src_dir }}"
     checksum: sha256:b87c738cb2032bf4920fef8e3864dc5cf8eae9d89d8d523ce0236945c5797dcd
+    validate_certs: false
   when: (not ruby.stat.exists) and (not tarball.stat.exists)
 
 - name: Expand ruby source
