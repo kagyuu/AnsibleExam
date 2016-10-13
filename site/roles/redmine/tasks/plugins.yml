@@ -11,6 +11,21 @@
     repo=https://github.com/alexbevi/redmine_knowledgebase.git
     dest={{ redmine_dir }}/plugins/redmine_knowledgebase
 
+- name: install time_logger plugin
+  git:
+    repo=https://github.com/speedy32129/time_logger.git
+    dest={{ redmine_dir }}/plugins/time_logger
+
+- name: install redmine_default_custom_query plugin
+  git:
+    repo=https://github.com/hidakatsuya/redmine_default_custom_query.git
+    dest={{ redmine_dir }}/plugins/redmine_default_custom_query
+
+- name: install redmine_issue_templates plugin
+  git:
+    repo=https://github.com/akiko-pusu/redmine_issue_templates.git
+    dest={{ redmine_dir }}/plugins/redmine_issue_templates
+
 - name: install backlogs plugin for redmine 3
   git:
     repo=https://github.com/backlogs/redmine_backlogs.git
@@ -31,11 +46,30 @@
     dest=/var/lib/redmine/plugins/redmine_backlogs/Gemfile
     backup=yes
 
+- name: install redmine_lightbox2 plugin
+  git:
+    repo=https://github.com/paginagmbh/redmine_lightbox2.git
+    dest={{ redmine_dir }}/plugins/redmine_lightbox2
+
+- name: install redmine_tagging plugin
+  git:
+    repo=https://github.com/Restream/redmine_tagging.git
+    dest={{ redmine_dir }}/plugins/redmine_tagging
+    force=yes
+
+- name: apply patch to /var/lib/redmine/plugins/redmine_tagging/Gemfile
+  patch: >
+    src=tagging_Gemfile.diff
+    dest=/var/lib/redmine/plugins/redmine_tagging/Gemfile
+    backup=yes
+
+- name: install redmine_theme_changer plugin
+  hg:
+    repo=https://bitbucket.org/haru_iida/redmine_theme_changer
+    dest={{ redmine_dir }}/plugins/redmine_theme_changer
+
 # [TODO] RM+ Userbility
 # [TODO] RM+ Custom Menu
-# [TODO] Redmine Time Logger plugin
-# [TODO] Redmine Default Custom Query
-# [TODO] Redmine Issue Templates plugin
 # [TODO] Easy Gantt
 
 - name: install plugin gems

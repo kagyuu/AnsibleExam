@@ -2,6 +2,9 @@
 - name: Gitlab Server
   hosts: gitlab
   become: yes
+  vars_files:
+    - proxy.yml
+  environment: "{{ proxy_env }}"
   roles:
     - common
     - gitlab
@@ -9,6 +12,9 @@
 - name: Redmine Server
   hosts: redmine
   become: yes
+  vars_files:
+    - proxy.yml
+  environment: "{{ proxy_env }}"
   roles:
     - common
     - ruby
