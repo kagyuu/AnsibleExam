@@ -1,0 +1,4 @@
+1c1
+< gem 'redmine_acts_as_taggable_on', github: "alexbevi/redmine_acts_as_taggable_on"
+---
+> gem 'redmine_acts_as_taggable_on'

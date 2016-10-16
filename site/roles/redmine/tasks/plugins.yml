@@ -1,31 +1,49 @@
 ---
-# RM+ common lib
+##########
+## RM+ common lib
 - name: install RM+ a_common_libs plugin
   git:
     repo=https://bitbucket.org/dkuk/a_common_libs.git
     dest={{ redmine_dir }}/plugins/a_common_libs
 
+##########
+## Knowledgebase
 # we must install this plugin to the directory "/plugins/redmine_knowledgebase" exactly.
 - name: install knowledgebase plugin
   git:
     repo=https://github.com/alexbevi/redmine_knowledgebase.git
     dest={{ redmine_dir }}/plugins/redmine_knowledgebase
+    force=yes
 
+- name: apply patch to /var/lib/redmine/plugins/redmine_backlogs/Gemfile
+  patch: >
+    src=backlogs_Gemfile.diff
+    dest=/var/lib/redmine/plugins/redmine_backlogs/Gemfile
+    backup=yes
+
+##########
+## time logger
 - name: install time_logger plugin
   git:
     repo=https://github.com/speedy32129/time_logger.git
     dest={{ redmine_dir }}/plugins/time_logger
 
+##########
+## default custome query
 - name: install redmine_default_custom_query plugin
   git:
     repo=https://github.com/hidakatsuya/redmine_default_custom_query.git
     dest={{ redmine_dir }}/plugins/redmine_default_custom_query
 
+##########
+## issue template
 - name: install redmine_issue_templates plugin
   git:
     repo=https://github.com/akiko-pusu/redmine_issue_templates.git
     dest={{ redmine_dir }}/plugins/redmine_issue_templates
 
+##########
+## backlog
 - name: install backlogs plugin for redmine 3
   git:
     repo=https://github.com/backlogs/redmine_backlogs.git
@@ -46,11 +64,15 @@
     dest=/var/lib/redmine/plugins/redmine_backlogs/Gemfile
     backup=yes
 
+##########
+## lightbox2
 - name: install redmine_lightbox2 plugin
   git:
     repo=https://github.com/paginagmbh/redmine_lightbox2.git
     dest={{ redmine_dir }}/plugins/redmine_lightbox2
 
+##########
+## tagging
 - name: install redmine_tagging plugin
   git:
     repo=https://github.com/Restream/redmine_tagging.git
@@ -63,6 +85,8 @@
     dest=/var/lib/redmine/plugins/redmine_tagging/Gemfile
     backup=yes
 
+##########
+## theme changer
 - name: install redmine_theme_changer plugin
   hg:
     repo=https://bitbucket.org/haru_iida/redmine_theme_changer
@@ -70,37 +94,4 @@
 
 # [TODO] RM+ Userbility
 # [TODO] RM+ Custom Menu
-# [TODO] Easy Gantt
-
-- name: install plugin gems
-  command:
-    bundle install --no-deployment
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-
-- name: update gems
-  command:
-    bundle update
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-
-- name: migrate redmine-database
-  command:
-    bundle exec rake db:migrate
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-
-- name: migrate plugins-database
-  command:
-    bundle exec rake redmine:plugins:migrate
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
- 
+# [TODO] Easy Gantt 

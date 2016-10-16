@@ -14,3 +14,15 @@
     src=https://www.redminecrm.com/license_manager/29210/circle_theme-2_1_0.zip
     dest={{ redmine_dir }}/public/themes
     copy=no
+
+# unarchive task can talk http, but it can't use proxy.
+- name: install circle theme
+  get_url:
+    url: https://www.redminecrm.com/license_manager/29210/circle_theme-2_1_0.zip
+    dest: /tmp
+    validate_certs: false
+
+- name: expand circle theme
+  command:
+    chdir={{ redmine_dir }}/public/themes
+    unzip -f /tmp/circle_theme-2_1_0.zip
