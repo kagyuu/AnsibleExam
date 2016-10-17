@@ -49,15 +49,13 @@
     dest={{ redmine_dir }}/config/configuration.yml
     force=no
 
-- include: tasks/themes.yml
-- include: tasks/plugins.yml
-
 - name: install gem package
   command:
     bundle install --without development test --path vendor/bundle
     chdir={{ redmine_dir }}
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  when: result_database_yml | changed
 
 - name: create secret token
   command:
@@ -66,41 +64,19 @@
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
     RAILS_ENV: production
+  when: result_database_yml | changed
 
-- name: install plugin gems
-  command:
-    bundle install --no-deployment
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-
-- name: update gems
-  command:
-    bundle update
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-
-- name: migrate redmine-database
+# following data settings only would be executed on first run,
+# "result_database_yml | changed" is used as first-run-flag.
+- name: create database
   command:
     bundle exec rake db:migrate
     chdir={{ redmine_dir }}
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
     RAILS_ENV: production
+  when: result_database_yml | changed
 
-- name: migrate plugins-database
-  command:
-    bundle exec rake redmine:plugins:migrate
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-
-# following data settings only would be executed on first run,
-# "result_database_yml | changed" is used as first-run-flag.
 - name: import default data
   command:
     bundle exec rake redmine:load_default_data
@@ -113,6 +89,9 @@
 
 - include: tasks/settings_ja.yml
   when: result_database_yml | changed
+
+- include: tasks/themes.yml
+- include: tasks/plugins.yml
 
 # This task must be last for building redmine.
 # We want to change whole files of redmine to apache:apache, so we must execute

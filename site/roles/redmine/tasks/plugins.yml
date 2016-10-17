@@ -1,6 +1,6 @@
 ---
 ##########
-## RM+ common lib
+# RM+ common lib
 - name: install RM+ a_common_libs plugin
   git:
     repo=https://bitbucket.org/dkuk/a_common_libs.git
@@ -15,11 +15,12 @@
     dest={{ redmine_dir }}/plugins/redmine_knowledgebase
     force=yes
 
-- name: apply patch to /var/lib/redmine/plugins/redmine_backlogs/Gemfile
+- name: apply patch to /var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
   patch: >
-    src=backlogs_Gemfile.diff
-    dest=/var/lib/redmine/plugins/redmine_backlogs/Gemfile
+    src=knowledgebase_Gemfile.diff
+    dest=/var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
     backup=yes
+  ignore_errors: yes
 
 ##########
 ## time logger
@@ -63,6 +64,7 @@
     src=backlogs_Gemfile.diff
     dest=/var/lib/redmine/plugins/redmine_backlogs/Gemfile
     backup=yes
+  ignore_errors: yes
 
 ##########
 ## lightbox2
@@ -70,20 +72,6 @@
   git:
     repo=https://github.com/paginagmbh/redmine_lightbox2.git
     dest={{ redmine_dir }}/plugins/redmine_lightbox2
-
-##########
-## tagging
-- name: install redmine_tagging plugin
-  git:
-    repo=https://github.com/Restream/redmine_tagging.git
-    dest={{ redmine_dir }}/plugins/redmine_tagging
-    force=yes
-
-- name: apply patch to /var/lib/redmine/plugins/redmine_tagging/Gemfile
-  patch: >
-    src=tagging_Gemfile.diff
-    dest=/var/lib/redmine/plugins/redmine_tagging/Gemfile
-    backup=yes
 
 ##########
 ## theme changer
@@ -94,4 +82,40 @@
 
 # [TODO] RM+ Userbility
 # [TODO] RM+ Custom Menu
-# [TODO] Easy Gantt 
+# [TODO] Easy Gantt
+
+- name: delete Gemfile.lock
+  file: path={{ redmine_dir }}/Gemfile.lock state=absent
+
+- name: install plugin gems
+  command:
+    bundle install --no-deployment
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
+- name: update gems
+  command:
+    bundle update
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
+- name: migrate redmine-database
+  command:
+    bundle exec rake db:migrate
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
+- name: migrate plugins-database
+  command:
+    bundle exec rake redmine:plugins:migrate
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
