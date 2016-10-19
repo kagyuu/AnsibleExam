@@ -9,6 +9,11 @@
     repo=https://github.com/makotokw/redmine-theme-gitmike.git
     dest={{ redmine_dir }}/public/themes/gitmike
 
+- name: install flat theme
+  git:
+    repo=https://github.com/tsi/redmine-theme-flat.git
+    dest={{ redmine_dir }}/public/themes/flat
+
 # It will fail in the proxy enviromment, but no problem.
 - name: install circle theme
   unarchive: 
