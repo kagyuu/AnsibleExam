@@ -80,9 +80,23 @@
     repo=https://bitbucket.org/haru_iida/redmine_theme_changer
     dest={{ redmine_dir }}/plugins/redmine_theme_changer
 
+##########
+## local avatars
+- name: install redmine_local_avatars plugin
+  git:
+    repo=https://github.com/ncoders/redmine_local_avatars.git
+    dest={{ redmine_dir }}/plugins/redmine_local_avatars
+
+##########
+## EasyGanttFree
+- name: install EasyGanttFree
+  unarchive:
+    src=files/EasyGanttFree.zip
+    dest={{ redmine_dir }}/plugins
+  ignore_errors: yes
+
 # [TODO] RM+ Userbility
 # [TODO] RM+ Custom Menu
-# [TODO] Easy Gantt
 
 - name: delete Gemfile.lock
   file: path={{ redmine_dir }}/Gemfile.lock state=absent
@@ -118,4 +132,3 @@
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
     RAILS_ENV: production
-

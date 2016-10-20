@@ -14,12 +14,12 @@ Usage
 ------
 ### 1. Prepare IA64 Server ###
 
-- At the start point, you need to prepare 5 minimum installed CentOS7s as the base of services. The Ansible requires that these machines has sshd service and python2. We recommend thease machines are real machines or virtual machines on the cloud service such as inhouse OpenStack or AWS.
+- At the start point, you need to prepare 5 minimum installed CentOS7s as the base of services. The Ansible requests that these machines has sshd service and python2. We recommend these machines are real machines or virtual machines on the cloud service such as inhouse OpenStack or AWS.
 
 - But instantly, you can use Vagrantfile to build VMs for trial use or small project.
   1. Install [Oracle VM VirtualBox](https://www.virtualbox.org/) and [Vagrant by HashiCorp](https://www.vagrantup.com/) on your machine.
   1. Modify Vagrantfile
-    - This Vagrantfile creates VMs thease are connectd to the public network (LAN) toward physical NIC. So, you must change NIC name for bridge on the Vagrantfile, if your machine is not Macbook Pro. You can also delete the NIC name, if do so, Vagrant ask you select NIC during `vagrant up` command.
+    - This Vagrantfile creates VMs these are connected to the public network (LAN) toward physical NIC. So, you must change NIC name for bridge on the Vagrantfile, if your machine is not Macbook Pro. You can also delete the NIC name, if do so, Vagrant ask you select NIC during `vagrant up` command.
     - This Vagrantfile supposed that the ip address of a VM is supplied from DHCP server, and you can lookup VMs by mDNS (avahi/apple's bonjour). So, if you want to change network settings, you must rewrite Vagrantfile drastically.
   1. Wakeup VMs
     - Wakeup all VMs. `$ vagrant up`
@@ -27,47 +27,60 @@ Usage
 
 ### 2. Access settings for Ansible ###
 
-- If you use Vagrant, you need not modify access settings.
+- (If you use Vagrant, you need not modify access settings.)
 - group_vars/vagrant.yml
 
-      ---
-      ansible_ssh_user: vagrant
+  ```yaml
+  ---
+  ansible_ssh_user: vagrant
+  ```
 
 - host_vars/gitlab.yml
 
-      ---
-      ansible_ssh_host: 127.0.0.1
-      ansible_ssh_port: 2222
-      ansible_ssh_private_key_file: .vagrant/machines/gitlab/virtualbox/private_key
+  ```yaml
+  ---
+  ansible_ssh_host: 127.0.0.1
+  ansible_ssh_port: 2222
+  ansible_ssh_private_key_file: .vagrant/machines/gitlab/virtualbox/private_key
+  ```
 
 - host_vars/gitlab.yml
 
-      ---
-      ansible_ssh_host: 127.0.0.1
-      ansible_ssh_port: 2223
-      ansible_ssh_private_key_file: .vagrant/machines/redmine/virtualbox/private_key
+  ```yaml
+  ---
+  ansible_ssh_host: 127.0.0.1
+  ansible_ssh_port: 2223
+  ansible_ssh_private_key_file: .vagrant/machines/redmine/virtualbox/private_key
 
-      db_passwd_redmine : a9EtesfPqJm3
+  db_passwd_redmine : a9EtesfPqJm3
+  ```
 
 - (if you need proxy settings,) delete comment out mark "#" on proxy.yml and modify it.
 
-      ---
-      #http_proxy_host: proxy.foo.com
-      #http_proxy_port: 3128
-      #http_proxy_username: john@foo.com
-      #http_proxy_password: password
+  ```yaml
+  ---
+  #http_proxy_host: proxy.foo.com
+  #http_proxy_port: 3128
+  #http_proxy_username: john@foo.com
+  #http_proxy_password: password
 
-      #http_proxy: http://{{ http_proxy_host }}:{{ http_proxy_port }}
-      #http_proxy: http://{{ http_proxy_username | urlencode() }}:{{ http_proxy_password }}@{{ http_proxy_host }}:{{ http_proxy_port }}
+  #http_proxy: http://{{ http_proxy_host }}:{{ http_proxy_port }}
+  #http_proxy: http://{{ http_proxy_username | urlencode() }}:{{ http_proxy_password }}@{{ http_proxy_host }}:{{ http_proxy_port }}
 
-      proxy_env :
-        no_proxy: 127.0.0.1,localhost
-        http_proxy: "{{ http_proxy | default(None) }}"
-        https_proxy: "{{ http_proxy | default(None) }}"
+  proxy_env :
+    no_proxy: 127.0.0.1,localhost
+    http_proxy: "{{ http_proxy | default(None) }}"
+    https_proxy: "{{ http_proxy | default(None) }}"
+  ```
 
-### 3. Download commercial plugins ###
+### 3. Manual settings ###
 
-- see [Redmine Commercial Free plugins](#redmine_plugins)
+- Gitlab
+  - you need nothing to do.
+- Redmine
+  - 1.set locale for redmine
+  - 2.download plugins
+  - for more details, see [Details of Redmine](#redmine)
 
 ### 4. Install services ###
 
@@ -79,10 +92,18 @@ Details
 ----------------
 ### Gitlab ###
 
-### Redmine ###
+### <a name="redmine_plugins">Redmine</a> ###
 
+- About Locale
+  - <span style="color:red">Change redmine_locale variablie</span> in  /roles/redmine/vars/main.yml
+    ```yaml
+    ---
+    redmine_dir : /var/lib/redmine
+    redmine_locale : ja
+    ```
+  - The locale of initial redmine data on postgresql is {{ redmine_locale }}. Frankly, ``bundle exec rake redmine:load_default_data REDMINE_LANG="{{ redmine_locale }}"`` will be invoked.
 - Free plugins
-  - Thease are automatically installed by ths ansible-playbook
+  - these are automatically installed by ths ansible-playbook
   - RM+ Coomon library
     - https://bitbucket.org/dkuk/a_common_libs.git
   - Knowledgebase
@@ -95,14 +116,17 @@ Details
     - https://github.com/akiko-pusu/redmine_issue_templates.git
   - Backlogs (Kanban)
     - https://github.com/backlogs/redmine_backlogs.git
-  - Lightbox2
+  - Lightbox2 (Preview attached images)
     - https://github.com/paginagmbh/redmine_lightbox2.git
   - Theme Changer
     - https://bitbucket.org/haru_iida/redmine_theme_changer
   - Local Avator
-- <a name="redmine_plugins"> Commercial Free plugins </a>
-  - <span style="color:red">Thease are free, but you need to register email and downlowd zip files.</span>
+    - https://github.com/ncoders/redmine_local_avatars.git
+- Commercial Free plugins
+  - <span style="color:red">These are free, but you need to register email and downlowd zip files.</span> If you don't download these plugins, this ansible-playbook simply ignore these, i.e. the install process not abend (abnormal-end).
   - Easy Gantt
+    - https://www.easyredmine.com/redmine-gantt-plugin
+    - download EasyGanttFree.zip and put it on the directory '/roles/redmine/files/'
 
 ### OpenLDAP ###
 

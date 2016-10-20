@@ -1,12 +1,11 @@
 ---
-- name: Set initial settings
+- name: Set common initial settings
   command:
     bundle exec rails r '{{ item }}'
     chdir={{ redmine_dir }}
   with_items:
-    # Japanese
-    - 'Setting["default_language"]="ja"'
-    - 'Setting["user_format"]="lastname_firstname"'
+    # Locale
+    - 'Setting["default_language"]="{{ redmine_locale }}"'
     - 'Setting["repositories_encodings"]="UTF-8,CP932,EUC-JP"'
     # Default Theme
     - 'Setting["ui_theme"]="gitmike"'
@@ -26,3 +25,16 @@
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
     RAILS_ENV: production
+
+# In some countries, name order is FAMILY-NAME INDIVIDUAL-NAME.
+# Typical countries are Japan, Koria, China, Hungary.
+- name: Set name order
+  command:
+    bundle exec rails r '{{ item }}'
+    chdir={{ redmine_dir }}
+  with_items:
+    - 'Setting["user_format"]="lastname_firstname"'
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+  when: 'redmine_locale in ["ja","kr","kp","cn","tw","hu"]'
