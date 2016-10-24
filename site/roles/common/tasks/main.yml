@@ -20,6 +20,7 @@
     - avahi
     - avahi-tools
     - nss-mdns
+    - patch
 
 - name: Disable SELinux
   selinux: state=disabled
@@ -53,7 +54,7 @@
     - postfix
     - firewalld
     - avahi-daemon
-    
+
 - name: Setup firewalld
   firewalld: permanent=True service={{ item }} state=enabled permanent=yes
   with_items:
@@ -65,4 +66,3 @@
 # Workaround for ansible 2.1 : handler in role not work
 - name: Reload firewall
   service: name=firewalld state=reloaded
-  

@@ -88,15 +88,21 @@
     dest={{ redmine_dir }}/plugins/redmine_local_avatars
 
 ##########
-## EasyGanttFree
-- name: install EasyGanttFree
+## Non free plugins
+- name: install non free plugins
   unarchive:
-    src=files/EasyGanttFree.zip
+    src=files/{{ item }}
     dest={{ redmine_dir }}/plugins
+  with_items:
+    - EasyGanttFree.zip
+    - EasyWBSFree.zip
+    - redmine_favorite_projects-2_0_3-light.zip
+    - redmine_questions-0_0_7-light.zip
+    - redmine_zenedit-0_0_2-light.zip
+    - usability.zip
+    - custom_menu.zip
+    - extra_queries.zip
   ignore_errors: yes
-
-# [TODO] RM+ Userbility
-# [TODO] RM+ Custom Menu
 
 - name: delete Gemfile.lock
   file: path={{ redmine_dir }}/Gemfile.lock state=absent

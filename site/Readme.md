@@ -124,9 +124,23 @@ Details
     - https://github.com/ncoders/redmine_local_avatars.git
 - Commercial Free plugins
   - <span style="color:red">These are free, but you need to register email and downlowd zip files.</span> If you don't download these plugins, this ansible-playbook simply ignore these, i.e. the install process not abend (abnormal-end).
-  - Easy Gantt
-    - https://www.easyredmine.com/redmine-gantt-plugin
-    - download EasyGanttFree.zip and put it on the directory '/roles/redmine/files/'
+  - Easy Redmine Plugins
+    - Gantt https://www.easyredmine.com/redmine-gantt-plugin
+    - WBS https://www.easyredmine.com/redmine-wbs-plugin
+    - download EasyGanttFree.zip and EasyWBSFree.zip. Then put these on the directory '/roles/redmine/files/'
+  - Redmine CRM Plugins
+    - https://www.redminecrm.com/
+    - Favorite Porjects : Shortcut selectbox to projects
+    - Questions : QA Forum
+    - Zen Edit : Full screen editor
+    - download redmine_favorite_projects-2_0_3-light.zip, redmine_questions_0_0_7-light.zip and redmine_zenedit-0_0_2-light.zip. Then put these on the directory '/roles/redmine/files/'
+  - RM+ Plugins
+    - http://rmplus.pro/en
+    - Usability : Hide sidebar, Upload images on the clipboard, more.
+    - Custom menu : Users can modify his/her own menu bar
+    - Extra Query : Cool ticker filter
+    - download custom_menu.zip, extra_queries.zip and usability.zip. Then put these on the directory '/roles/redmine/files/'
+
 
 ### OpenLDAP ###
 
