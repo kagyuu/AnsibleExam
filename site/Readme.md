@@ -96,37 +96,39 @@ Details
 
 - About Locale
   - <span style="color:red">Change redmine_locale variablie</span> in  /roles/redmine/vars/main.yml
+
     ```yaml
     ---
     redmine_dir : /var/lib/redmine
     redmine_locale : ja
     ```
+
   - The locale of initial redmine data on postgresql is {{ redmine_locale }}. Frankly, ``bundle exec rake redmine:load_default_data REDMINE_LANG="{{ redmine_locale }}"`` will be invoked.
 - Free plugins
   - these are automatically installed by ths ansible-playbook
-  - RM+ Coomon library
-    - https://bitbucket.org/dkuk/a_common_libs.git
-  - Knowledgebase
-    - https://github.com/alexbevi/redmine_knowledgebase.git
-  - Time logger
-    - https://github.com/speedy32129/time_logger.git
-  - Default Custome Query
-    - https://github.com/hidakatsuya/redmine_default_custom_query.git
-  - Issue Template
-    - https://github.com/akiko-pusu/redmine_issue_templates.git
-  - Backlogs (Kanban)
-    - https://github.com/backlogs/redmine_backlogs.git
-  - Lightbox2 (Preview attached images)
-    - https://github.com/paginagmbh/redmine_lightbox2.git
-  - Theme Changer
-    - https://bitbucket.org/haru_iida/redmine_theme_changer
-  - Local Avator
-    - https://github.com/ncoders/redmine_local_avatars.git
+  - Ticket
+    - [Issue Template](https://github.com/akiko-pusu/redmine_issue_templates.git)
+    - [Excel Export](https://github.com/two-pack/redmine_xls_export.git)
+    - [Default Custome Query](https://github.com/hidakatsuya/redmine_default_custom_query.git)
+    - [Backlogs](https://github.com/backlogs/redmine_backlogs.git) (Kanban)
+  - Wiki
+    - [Wiki Extensions](https://bitbucket.org/haru_iida/redmine_wiki_extensions)
+    - [Knowledgebase](https://github.com/alexbevi/redmine_knowledgebase.git)
+    - [Lightbox2](https://github.com/paginagmbh/redmine_lightbox2.git) (Preview attached images)
+    - [Clipboard image paste](https://github.com/peclik/clipboard_image_paste.git) (Attach an image on clipbard to wiki)
+    - [Embedded Flash](https://github.com/fcrespel/redmine_embedded_flash.git) ({{flash(<attached file>|<URL>,width,height)}})
+    - [Wiki Lists](https://github.com/tkusukawa/redmine_wiki_lists.git) (show tickets on wiki {{ref_issues(condition formula..., expression formula...)}})        
+  - Usability
+    - [Theme Changer](https://bitbucket.org/haru_iida/redmine_theme_changer)
+    - [Local Avator](https://github.com/ncoders/redmine_local_avatars.git)
+    - [Sidebar hide](https://github.com/bdemirkir/sidebar_hide.git)
+    - [Banner](https://github.com/akiko-pusu/redmine_banner.git) (show maintenance message etc.)
+    - [View Customize](https://github.com/onozaty/redmine-view-customize.git) (add any css/javascript to a page)
 - Commercial Free plugins
   - <span style="color:red">These are free, but you need to register email and downlowd zip files.</span> If you don't download these plugins, this ansible-playbook simply ignore these, i.e. the install process not abend (abnormal-end).
   - Easy Redmine Plugins
-    - Gantt https://www.easyredmine.com/redmine-gantt-plugin
-    - WBS https://www.easyredmine.com/redmine-wbs-plugin
+    - [Gantt](https://www.easyredmine.com/redmine-gantt-plugin)
+    - [WBS](https://www.easyredmine.com/redmine-wbs-plugin)
     - download EasyGanttFree.zip and EasyWBSFree.zip. Then put these on the directory '/roles/redmine/files/'
   - Redmine CRM Plugins
     - https://www.redminecrm.com/
@@ -134,13 +136,7 @@ Details
     - Questions : QA Forum
     - Zen Edit : Full screen editor
     - download redmine_favorite_projects-2_0_3-light.zip, redmine_questions_0_0_7-light.zip and redmine_zenedit-0_0_2-light.zip. Then put these on the directory '/roles/redmine/files/'
-  - RM+ Plugins
-    - http://rmplus.pro/en
-    - Usability : Hide sidebar, Upload images on the clipboard, more.
-    - Custom menu : Users can modify his/her own menu bar
-    - Extra Query : Cool ticker filter
-    - download custom_menu.zip, extra_queries.zip and usability.zip. Then put these on the directory '/roles/redmine/files/'
-
+  - [RM+](http://rmplus.pro/en) creates cool plugins, but these conflicts with  the backlogs plugin ;-).
 
 ### OpenLDAP ###
 

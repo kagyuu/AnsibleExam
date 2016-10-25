@@ -9,6 +9,7 @@
   yum: name={{ item }}  state=present
   with_items:
     - curl
+    - wget
     - policycoreutils
     - openssh-server
     - openssh-clients
@@ -21,6 +22,8 @@
     - avahi-tools
     - nss-mdns
     - patch
+    - tar
+    - unzip
 
 - name: Disable SELinux
   selinux: state=disabled

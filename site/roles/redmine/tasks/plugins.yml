@@ -1,47 +1,30 @@
 ---
-##########
-# RM+ common lib
-- name: install RM+ a_common_libs plugin
+- name: install plugins in github
   git:
-    repo=https://bitbucket.org/dkuk/a_common_libs.git
-    dest={{ redmine_dir }}/plugins/a_common_libs
+    repo=https://github.com/{{ item.author }}/{{ item.plugin }}.git
+    dest={{ redmine_dir }}/plugins/{{ item.plugin }}
+  with_items:
+    # Ticket
+    - { author: "akiko-pusu"  , plugin: "redmine_issue_templates"}
+    - { author: "hidakatsuya" , plugin: "redmine_default_custom_query"}
+    # Wiki
+    - { author: "paginagmbh"  , plugin: "redmine_lightbox2"}
+    - { author: "peclik"      , plugin: "clipboard_image_paste"}
+    - { author: "fcrespel"    , plugin: "redmine_embedded_flash"}
+    - { author: "tkusukawa"   , plugin: "redmine_wiki_lists"}
+    # usability
+    - { author: "ncoders"     , plugin: "redmine_local_avatars"}
+    - { author: "bdemirkir"   , plugin: "sidebar_hide"}
+    - { author: "akiko-pusu"  , plugin: "redmine_banner"}
+    - { author: "onozaty"     , plugin: "redmine-view-customize"}
 
-##########
-## Knowledgebase
-# we must install this plugin to the directory "/plugins/redmine_knowledgebase" exactly.
-- name: install knowledgebase plugin
-  git:
-    repo=https://github.com/alexbevi/redmine_knowledgebase.git
-    dest={{ redmine_dir }}/plugins/redmine_knowledgebase
-    force=yes
-
-- name: apply patch to /var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
-  patch: >
-    src=knowledgebase_Gemfile.diff
-    dest=/var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
-    backup=yes
-  ignore_errors: yes
-
-##########
-## time logger
-- name: install time_logger plugin
-  git:
-    repo=https://github.com/speedy32129/time_logger.git
-    dest={{ redmine_dir }}/plugins/time_logger
-
-##########
-## default custome query
-- name: install redmine_default_custom_query plugin
-  git:
-    repo=https://github.com/hidakatsuya/redmine_default_custom_query.git
-    dest={{ redmine_dir }}/plugins/redmine_default_custom_query
-
-##########
-## issue template
-- name: install redmine_issue_templates plugin
-  git:
-    repo=https://github.com/akiko-pusu/redmine_issue_templates.git
-    dest={{ redmine_dir }}/plugins/redmine_issue_templates
+- name: install plugins in bitbucket
+  hg:
+    repo=https://bitbucket.org/{{ item.author }}/{{ item.plugin }}
+    dest={{ redmine_dir }}/plugins/{{ item.plugin }}
+  with_items:
+    - { author: "haru_iida"   , plugin: "redmine_theme_changer"}
+    - { author: "haru_iida"   , plugin: "redmine_wiki_extensions"}
 
 ##########
 ## backlog
@@ -67,25 +50,34 @@
   ignore_errors: yes
 
 ##########
-## lightbox2
-- name: install redmine_lightbox2 plugin
+## knowledgebase
+- name: install redmine_knowledgebase plugin
   git:
-    repo=https://github.com/paginagmbh/redmine_lightbox2.git
-    dest={{ redmine_dir }}/plugins/redmine_lightbox2
+    repo=https://github.com/alexbevi/redmine_knowledgebase.git
+    dest={{ redmine_dir }}/plugins/redmine_knowledgebase
+    force=yes
+
+- name: apply patch to /var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
+  patch: >
+    src=knowledgebase_Gemfile.diff
+    dest=/var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
+    backup=yes
+  ignore_errors: yes
 
 ##########
-## theme changer
-- name: install redmine_theme_changer plugin
-  hg:
-    repo=https://bitbucket.org/haru_iida/redmine_theme_changer
-    dest={{ redmine_dir }}/plugins/redmine_theme_changer
-
-##########
-## local avatars
-- name: install redmine_local_avatars plugin
+## xls export
+- name: install redmine_xls_export plugin
   git:
-    repo=https://github.com/ncoders/redmine_local_avatars.git
-    dest={{ redmine_dir }}/plugins/redmine_local_avatars
+    repo=https://github.com/two-pack/redmine_xls_export.git
+    dest={{ redmine_dir }}/plugins/redmine_xls_export
+    force=yes
+
+- name: apply patch to /var/lib/redmine/plugins/redmine_xls_export/Gemfile
+  patch: >
+    src=xls_export_Gemfile.diff
+    dest=/var/lib/redmine/plugins/redmine_xls_export/Gemfile
+    backup=yes
+  ignore_errors: yes
 
 ##########
 ## Non free plugins
@@ -99,9 +91,6 @@
     - redmine_favorite_projects-2_0_3-light.zip
     - redmine_questions-0_0_7-light.zip
     - redmine_zenedit-0_0_2-light.zip
-    - usability.zip
-    - custom_menu.zip
-    - extra_queries.zip
   ignore_errors: yes
 
 - name: delete Gemfile.lock
