@@ -44,7 +44,7 @@ Usage
   ansible_ssh_private_key_file: .vagrant/machines/gitlab/virtualbox/private_key
   ```
 
-- host_vars/gitlab.yml
+- host_vars/redmine.yml
 
   ```yaml
   ---
