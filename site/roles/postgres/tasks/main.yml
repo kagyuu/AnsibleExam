@@ -17,6 +17,7 @@
 - name: append access settings
   lineinfile:
     dest=/var/lib/pgsql/data/pg_hba.conf
+    insertafter="#[ ]+TYPE[ ]+DATABASE[ ]+USER[ ]+ADDRESS[ ]+METHOD"
     line={{ item }}
   with_items:
     - 'host    {{ db_name }}         {{ db_name }}         127.0.0.1/32            md5'
