@@ -1,31 +1,4 @@
 ---
-- name: install plugins in github
-  git:
-    repo=https://github.com/{{ item.author }}/{{ item.plugin }}.git
-    dest={{ redmine_dir }}/plugins/{{ item.plugin }}
-  with_items:
-    # Ticket
-    - { author: "akiko-pusu"  , plugin: "redmine_issue_templates"}
-    - { author: "hidakatsuya" , plugin: "redmine_default_custom_query"}
-    # Wiki
-    - { author: "paginagmbh"  , plugin: "redmine_lightbox2"}
-    - { author: "peclik"      , plugin: "clipboard_image_paste"}
-    - { author: "fcrespel"    , plugin: "redmine_embedded_flash"}
-    - { author: "tkusukawa"   , plugin: "redmine_wiki_lists"}
-    # usability
-    - { author: "ncoders"     , plugin: "redmine_local_avatars"}
-    - { author: "bdemirkir"   , plugin: "sidebar_hide"}
-    - { author: "akiko-pusu"  , plugin: "redmine_banner"}
-    - { author: "onozaty"     , plugin: "redmine-view-customize"}
-
-- name: install plugins in bitbucket
-  hg:
-    repo=https://bitbucket.org/{{ item.author }}/{{ item.plugin }}
-    dest={{ redmine_dir }}/plugins/{{ item.plugin }}
-  with_items:
-    - { author: "haru_iida"   , plugin: "redmine_theme_changer"}
-    - { author: "haru_iida"   , plugin: "redmine_wiki_extensions"}
-
 ##########
 ## backlog
 - name: install backlogs plugin for redmine 3
@@ -49,6 +22,8 @@
     backup=yes
   ignore_errors: yes
 
+- include: tasks/plugins_install.yml
+
 ##########
 ## knowledgebase
 - name: install redmine_knowledgebase plugin
@@ -63,6 +38,24 @@
     dest=/var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
     backup=yes
   ignore_errors: yes
+
+- include: tasks/plugins_install.yml
+
+##########
+## Non free plugins
+- name: install non free plugins
+  unarchive:
+    src=files/{{ item }}
+    dest={{ redmine_dir }}/plugins
+  with_items:
+    - EasyGanttFree.zip
+    - EasyWBSFree.zip
+    - redmine_favorite_projects-2_0_3-light.zip
+    - redmine_questions-0_0_7-light.zip
+    - redmine_zenedit-0_0_2-light.zip
+  ignore_errors: yes
+
+- include: tasks/plugins_install.yml
 
 ##########
 ## xls export
@@ -79,51 +72,37 @@
     backup=yes
   ignore_errors: yes
 
+- include: tasks/plugins_install.yml
+
 ##########
-## Non free plugins
-- name: install non free plugins
-  unarchive:
-    src=files/{{ item }}
-    dest={{ redmine_dir }}/plugins
+## Other plugins
+- name: install plugins in bitbucket
+  hg:
+    repo=https://bitbucket.org/{{ item.author }}/{{ item.plugin }}
+    dest={{ redmine_dir }}/plugins/{{ item.plugin }}
   with_items:
-    - EasyGanttFree.zip
-    - EasyWBSFree.zip
-    - redmine_favorite_projects-2_0_3-light.zip
-    - redmine_questions-0_0_7-light.zip
-    - redmine_zenedit-0_0_2-light.zip
-  ignore_errors: yes
+    - { author: "haru_iida"   , plugin: "redmine_theme_changer"}
+    - { author: "haru_iida"   , plugin: "redmine_wiki_extensions"}
 
-- name: delete Gemfile.lock
-  file: path={{ redmine_dir }}/Gemfile.lock state=absent
+- include: tasks/plugins_install.yml
 
-- name: install plugin gems
-  command:
-    bundle install --no-deployment
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
+- name: install plugins in github
+  git:
+    repo=https://github.com/{{ item.author }}/{{ item.plugin }}.git
+    dest={{ redmine_dir }}/plugins/{{ item.plugin }}
+  with_items:
+    # Ticket
+    - { author: "akiko-pusu"  , plugin: "redmine_issue_templates"}
+    - { author: "hidakatsuya" , plugin: "redmine_default_custom_query"}
+    # Wiki
+    - { author: "paginagmbh"  , plugin: "redmine_lightbox2"}
+    - { author: "peclik"      , plugin: "clipboard_image_paste"}
+    - { author: "fcrespel"    , plugin: "redmine_embedded_flash"}
+    - { author: "tkusukawa"   , plugin: "redmine_wiki_lists"}
+    # usability
+    - { author: "ncoders"     , plugin: "redmine_local_avatars"}
+    - { author: "bdemirkir"   , plugin: "sidebar_hide"}
+    - { author: "akiko-pusu"  , plugin: "redmine_banner"}
+    - { author: "onozaty"     , plugin: "redmine-view-customize"}
 
-- name: update gems
-  command:
-    bundle update
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-
-- name: migrate redmine-database
-  command:
-    bundle exec rake db:migrate
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-
-- name: migrate plugins-database
-  command:
-    bundle exec rake redmine:plugins:migrate
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
+- include: tasks/plugins_install.yml
