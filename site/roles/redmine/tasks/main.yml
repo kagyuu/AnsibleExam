@@ -49,28 +49,14 @@
     dest={{ redmine_dir }}/config/configuration.yml
     force=no
 
-- name: install gem package
-  command:
-    bundle install --without development test --path vendor/bundle
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+# following data settings only would be executed on first run,
+# "result_database_yml | changed" is used as first-run-flag.
+- include: tasks/install.yml
   when: result_database_yml | changed
 
 - name: create secret token
   command:
     bundle exec rake generate_secret_token
-    chdir={{ redmine_dir }}
-  environment:
-    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
-    RAILS_ENV: production
-  when: result_database_yml | changed
-
-# following data settings only would be executed on first run,
-# "result_database_yml | changed" is used as first-run-flag.
-- name: create database
-  command:
-    bundle exec rake db:migrate
     chdir={{ redmine_dir }}
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"

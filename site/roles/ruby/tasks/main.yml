@@ -42,7 +42,7 @@
     chdir={{ src_dir }}/{{ ruby_version }}
     ./configure --disable-install-doc
   when: not ruby.stat.exists
-    
+
 - name: Make ruby
   command:
     chdir={{ src_dir }}/{{ ruby_version }}

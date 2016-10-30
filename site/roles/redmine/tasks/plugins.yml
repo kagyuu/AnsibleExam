@@ -22,24 +22,20 @@
     backup=yes
   ignore_errors: yes
 
-- include: tasks/plugins_install.yml
-
 ##########
-## knowledgebase
-- name: install redmine_knowledgebase plugin
-  git:
-    repo=https://github.com/alexbevi/redmine_knowledgebase.git
-    dest={{ redmine_dir }}/plugins/redmine_knowledgebase
-    force=yes
-
-- name: apply patch to /var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
-  patch: >
-    src=knowledgebase_Gemfile.diff
-    dest=/var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
-    backup=yes
-  ignore_errors: yes
-
-- include: tasks/plugins_install.yml
+## knowledgebase !! NOT WORK
+#- name: install redmine_knowledgebase plugin
+#  git:
+#    repo=https://github.com/alexbevi/redmine_knowledgebase.git
+#    dest={{ redmine_dir }}/plugins/redmine_knowledgebase
+#    force=yes
+#
+#- name: apply patch to /var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
+#  patch: >
+#    src=knowledgebase_Gemfile.diff
+#    dest=/var/lib/redmine/plugins/redmine_knowledgebase/Gemfile
+#    backup=yes
+#  ignore_errors: yes
 
 ##########
 ## Non free plugins
@@ -50,15 +46,14 @@
   with_items:
     - EasyGanttFree.zip
     - EasyWBSFree.zip
+## ここまでうまく行った
     - redmine_favorite_projects-2_0_3-light.zip
     - redmine_questions-0_0_7-light.zip
     - redmine_zenedit-0_0_2-light.zip
   ignore_errors: yes
 
-- include: tasks/plugins_install.yml
-
-##########
-## xls export
+###########
+### xls export
 - name: install redmine_xls_export plugin
   git:
     repo=https://github.com/two-pack/redmine_xls_export.git
@@ -72,8 +67,6 @@
     backup=yes
   ignore_errors: yes
 
-- include: tasks/plugins_install.yml
-
 ##########
 ## Other plugins
 - name: install plugins in bitbucket
@@ -83,8 +76,6 @@
   with_items:
     - { author: "haru_iida"   , plugin: "redmine_theme_changer"}
     - { author: "haru_iida"   , plugin: "redmine_wiki_extensions"}
-
-- include: tasks/plugins_install.yml
 
 - name: install plugins in github
   git:
@@ -103,6 +94,6 @@
     - { author: "ncoders"     , plugin: "redmine_local_avatars"}
     - { author: "bdemirkir"   , plugin: "sidebar_hide"}
     - { author: "akiko-pusu"  , plugin: "redmine_banner"}
-    - { author: "onozaty"     , plugin: "redmine-view-customize"}
+#    - { author: "onozaty"     , plugin: "redmine-view-customize"} !! NOT WORK
 
-- include: tasks/plugins_install.yml
+- include: tasks/install.yml
