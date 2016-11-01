@@ -1,0 +1,20 @@
+---
+- name: Install java/tomcat
+  yum: name={{ item }}  state=present
+  with_items:
+    - java-1.8.0-openjdk-devel
+    - tomcat
+    - postgresql-jdbc
+    - mysql-connector-java
+
+- name: Install jdbc drivers
+  file: src=/usr/share/java/{{ item }} dest=/usr/share/tomcat/lib/{{ item }} state=link
+  with_items:
+    - postgresql-jdbc3.jar
+    - mysql-connector-java.jar
+
+- name: tomcat service setup
+  service:
+    name=tomcat
+    state=restarted
+    enabled=yes

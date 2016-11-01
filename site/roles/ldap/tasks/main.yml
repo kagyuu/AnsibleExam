@@ -1,0 +1,15 @@
+---
+- name: Install OpenLDAP
+  yum: name={{ item }}  state=present
+  with_items:
+    - openldap-servers
+    - openldap-clients
+
+- name: ldap service setup
+  service:
+    name=slapd
+    state=restarted
+    enabled=yes
+
+# TODO set /var/lib/ldap/DB_CONFIG, set admin password by slappasswd,
+# initial db (ldif), schema like Active Direcotry
