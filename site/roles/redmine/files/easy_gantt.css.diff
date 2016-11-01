@@ -1,0 +1,10 @@
+92a93
+>     background-repeat: no-repeat;
+145c146
+<     color: #fff;
+---
+>     color: lightgray;
+678c679
+<     background-color: red;
+---
+>     background-color: orange;

@@ -82,6 +82,13 @@
 # This task must be last for building redmine.
 # We want to change whole files of redmine to apache:apache, so we must execute
 # this task all after patching yml setting files, installing all plugins and other settings.
+- name: apply patch to easy_gantt.css
+  patch: >
+    src=easy_gantt.css.diff
+    dest=/var/lib/redmine/public/plugin_assets/easy_gantt/stylesheets/easy_gantt.css
+    backup=yes
+  ignore_errors: yes
+
 - name: Change owner of {{ redmine_dir }} apache:apache
   file:
     path={{ redmine_dir }} state=directory

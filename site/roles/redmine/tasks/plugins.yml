@@ -46,7 +46,6 @@
   with_items:
     - EasyGanttFree.zip
     - EasyWBSFree.zip
-## ここまでうまく行った
     - redmine_favorite_projects-2_0_3-light.zip
     - redmine_questions-0_0_7-light.zip
     - redmine_zenedit-0_0_2-light.zip
@@ -80,7 +79,7 @@
 - name: install plugins in github
   git:
     repo=https://github.com/{{ item.author }}/{{ item.plugin }}.git
-    dest={{ redmine_dir }}/plugins/{{ item.plugin }}
+    dest={{ redmine_dir }}/plugins/{{ item.destdir | default(item.plugin) }}
   with_items:
     # Ticket
     - { author: "akiko-pusu"  , plugin: "redmine_issue_templates"}
@@ -94,6 +93,7 @@
     - { author: "ncoders"     , plugin: "redmine_local_avatars"}
     - { author: "bdemirkir"   , plugin: "sidebar_hide"}
     - { author: "akiko-pusu"  , plugin: "redmine_banner"}
-#    - { author: "onozaty"     , plugin: "redmine-view-customize"} !! NOT WORK
+    # looks good but not work
+    # - { author: "onozaty"     , plugin: "redmine-view-customize", destdir: "view-customize"}
 
 - include: tasks/install.yml
