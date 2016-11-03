@@ -22,14 +22,14 @@
     - redmine
     - passenger
 
-  -name: Ldap Server
-   hosts: ldap
-   become: yes
+- name: Ldap Server
+  hosts: ldap
+  become: yes
   vars_files:
     - proxy.yml
   environment: "{{ proxy_env }}"
   roles:
     - common
     - ldap
-    - tomcat
-    - pwm
+#    - tomcat
+#    - pwm

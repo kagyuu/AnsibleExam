@@ -51,6 +51,13 @@
     - redmine_zenedit-0_0_2-light.zip
   ignore_errors: yes
 
+- name: apply patch to easy_gantt.css
+  patch: >
+    src=easy_gantt.css.diff
+    dest=/var/lib/redmine/plugins/easy_gantt/assets/stylesheets/easy_gantt.css
+    backup=yes
+  ignore_errors: yes
+
 ###########
 ### xls export
 - name: install redmine_xls_export plugin

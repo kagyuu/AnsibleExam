@@ -5,6 +5,12 @@
     - openldap-servers
     - openldap-clients
 
+- name: copy db config
+  copy:
+    src=/usr/share/openldap-servers/DB_CONFIG.example
+    dest=/var/lib/ldap/DB_CONFIG
+    remote_src=True
+
 - name: ldap service setup
   service:
     name=slapd
