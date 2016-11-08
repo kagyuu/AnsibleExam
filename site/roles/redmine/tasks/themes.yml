@@ -9,6 +9,13 @@
     repo=https://github.com/makotokw/redmine-theme-gitmike.git
     dest={{ redmine_dir }}/public/themes/gitmike
 
+- name: apply patch to gitmike for easy-gantt
+  patch: >
+    src=gitmike.css.diff
+    dest=/var/lib/redmine/public/themes/gitmike/stylesheets/application.css
+    backup=yes
+  ignore_errors: yes
+
 # It will fail in the proxy enviromment, but no problem.
 - name: install circle theme
   unarchive:

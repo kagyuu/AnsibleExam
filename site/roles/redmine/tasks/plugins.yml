@@ -58,6 +58,15 @@
     backup=yes
   ignore_errors: yes
 
+- name: add star icon
+  copy: src=star.png dest=/var/lib/redmine/public/images/star.png mode=0644
+
+- name: add css class
+  lineinfile:
+    dest=/var/lib/redmine/public/stylesheets/application.css
+    insertafter=".icon-list"
+    line=".icon-star { background-image: url(../images/star.png); }"
+
 ###########
 ### xls export
 - name: install redmine_xls_export plugin

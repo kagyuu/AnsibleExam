@@ -1,8 +1,8 @@
 dn: {{ SUFFIX }}
 objectClass: dcObject
 objectClass: organization
-dc: [[ DOMAIN ]]
-o: [[ ORG ]]
+dc: {{ DOMAIN }}
+o: {{ ORG }}
 
 dn: ou=People,{{ SUFFIX }}
 objectClass: organizationalUnit
