@@ -55,6 +55,15 @@ Usage
   db_passwd_redmine : a9EtesfPqJm3
   ```
 
+- host_vars/ldap.yml
+
+    ```yaml
+    ---
+    ansible_ssh_host: 127.0.0.1
+    ansible_ssh_port: 2224
+    ansible_ssh_private_key_file: .vagrant/machines/ldap/virtualbox/private_key
+    ```
+
 - (if you need proxy settings,) delete comment out mark "#" on proxy.yml and modify it.
 
   ```yaml
@@ -81,6 +90,8 @@ Usage
   - 1.set locale for redmine
   - 2.download plugins
   - for more details, see [Details of Redmine](#redmine)
+- OpenLDAP
+  - you need nothing to do.
 
 ### 4. Install services ###
 

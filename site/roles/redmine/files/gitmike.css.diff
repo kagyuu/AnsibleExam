@@ -4,3 +4,7 @@
 ---
 > .button, input[type="submit"] { position: relative; display: inline-block; padding: 5px 11px; font-weight: bold; color: #333; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9); white-space: nowrap; background-color: #eaeaea; background-repeat: repeat-x; border-radius: 3px; border: 1px solid #ddd; border-bottom-color: #c4c4c4; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); vertical-align: middle; cursor: pointer; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-appearance: none; }
 > .button:hover, input[type="submit"]:hover { text-decoration: none; background-color: #dadada; border-color: #ccc #ccc #b5b5b5; }
+276c276
+< div.modal { border-radius: 8px; border: 1px solid #CCC; padding: 30px 42px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); }
+---
+> div.modal { border-radius: 8px; border: 1px solid #CCC; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); }

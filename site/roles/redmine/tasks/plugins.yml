@@ -65,7 +65,7 @@
   lineinfile:
     dest=/var/lib/redmine/public/stylesheets/application.css
     insertafter=".icon-list"
-    line=".icon-star { background-image: url(../images/star.png); }"
+    line=".icon-star { background-image{{ COLON }} url(../images/star.png); }"
 
 ###########
 ### xls export
