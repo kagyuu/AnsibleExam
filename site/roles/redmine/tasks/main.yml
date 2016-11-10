@@ -16,23 +16,11 @@
   stat: path={{ redmine_dir }}
   register: redmine
 
-# The subversion don't see shell env 'http_proxy'.
-- name: ~/.subversion/servers
-  template:
-    src=subversion.txt
-    dest=~/.subversion/servers
-    force=yes
-  when: http_proxy is defined
-
-# The subversion task execute 'svn info' and search 'Revision:' from stdout.
-# So, in Japanese environment, we must set LANG=C and LC_ALL=C.
 - name: Checkout Redmine
-  subversion:
-    repo=https://svn.redmine.org/redmine/branches/3.3-stable
-    dest={{ redmine_dir }}
-  environment:
-    LANG: "C"
-    LC_ALL: "C"
+  hg:
+    repo="https{{ COLON }}//bitbucket.org/redmine/redmine{{ MINUS }}all"
+    revision="3.3{{ MINUS }}stable"
+    dest="{{ redmine_dir }}"
   when: not redmine.stat.exists
 
 - name: database.yml

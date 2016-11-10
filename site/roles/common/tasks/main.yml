@@ -10,6 +10,7 @@
   with_items:
     - curl
     - wget
+    - lynx
     - policycoreutils
     - openssh-server
     - openssh-clients
