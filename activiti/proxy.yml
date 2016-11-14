@@ -1,0 +1,13 @@
+---
+#http_proxy_host: proxy.foo.com
+#http_proxy_port: 3128
+#http_proxy_username: john@foo.com
+#http_proxy_password: password
+
+#http_proxy: http://{{ http_proxy_host }}:{{ http_proxy_port }}
+#http_proxy: http://{{ http_proxy_username | urlencode() }}:{{ http_proxy_password }}@{{ http_proxy_host }}:{{ http_proxy_port }}
+
+proxy_env :
+  no_proxy: 127.0.0.1,localhost
+  http_proxy: "{{ http_proxy | default(None) }}"
+  https_proxy: "{{ http_proxy | default(None) }}"

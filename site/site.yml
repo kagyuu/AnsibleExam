@@ -31,6 +31,6 @@
   roles:
     - common
 #    - ldap
-    - java8
+#    - java8
 #    - tomcat
 #    - pwm

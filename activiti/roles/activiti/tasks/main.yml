@@ -1,0 +1,42 @@
+---
+- stat: path=/tmp/activiti-{{ activiti_version }}.zip
+  register: zip_archive
+
+- name: Download activiti
+  get_url:
+    url: https://github.com/Activiti/Activiti/releases/download/activiti-{{ activiti_version }}/activiti-{{ activiti_version }}.zip
+    dest: /tmp
+    validate_certs: false
+  when: (not zip_archive.stat.exists)
+
+- name: Expand activiti zip
+  unarchive:
+    src=/tmp/activiti-{{ activiti_version }}.zip
+    dest=/tmp
+    copy=no
+
+- name: Create target directory
+  file: path=/tmp/WEB-INF/classes state=directory mode=0755
+
+- name: create db.properties
+  template:
+    src=db.properties
+    dest=/tmp/WEB-INF/classes/db.properties
+    force=yes
+
+- name: insert db.properties to activiti-explorer
+  command:
+    chdir=/tmp
+    jar -uf activiti-{{ activiti_version }}/wars/activiti-{{ item }}.war WEB-INF/classes/db.properties
+  with_items:
+    - explorer
+    - rest
+
+- name: deploy activiti
+  copy: 
+    src=/tmp/activiti-{{ activiti_version }}/wars/activiti-{{ item }}.war
+    dest=/opt/tomcat/webapps/activiti-{{ item }}.war
+    remote_src=True
+  with_items:
+    - explorer
+    - rest
