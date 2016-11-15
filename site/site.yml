@@ -30,7 +30,6 @@
   environment: "{{ proxy_env }}"
   roles:
     - common
-#    - ldap
-#    - java8
-#    - tomcat
-#    - pwm
+    - ldap
+    - tomcat
+    - pwm
