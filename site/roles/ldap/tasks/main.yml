@@ -85,9 +85,9 @@
 - name: Setup firewalld
   service: name=firewalld state=started
 
-- firewalld: permanent=True port={{ item }} state=enabled permanent=yes
+- name: Setup firewalld
+  firewalld: permanent=True service={{ item }} state=enabled permanent=yes
   with_items:
-    - 8080/tcp
-    - 8443/tcp
+    - ldap
 
 - service: name=firewalld state=reloaded
