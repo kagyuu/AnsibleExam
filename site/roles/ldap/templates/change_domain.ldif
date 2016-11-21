@@ -13,6 +13,17 @@ dn: olcDatabase={2}hdb,cn=config
 changetype: modify
 replace: olcRootDN
 olcRootDN: cn=Manager,{{ SUFFIX }}
+changetype: modify
+add: olcAccess
+olcAccess: to attrs=userPassword
+  by dn="cn=Manager,{{ SUFFIX }}" manage
+  by self write
+  by anonymous auth
+  by * none
+olcAccess: to *
+  by dn="cn=Manager,{{ SUFFIX }}" manage
+  by self write
+  by * none
 
 dn: olcDatabase={2}hdb,cn=config
 changetype: modify

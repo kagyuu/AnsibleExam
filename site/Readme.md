@@ -7,6 +7,7 @@ This playbook creates following services on CentOS7 (or RHEL7 family):
 - [Jenkins](https://jenkins.io) 2.26
 - [Alfresco Community Edition](https://www.alfresco.com) 5.1
 - [OpenLDAP](www.openldap.org/) 2.4.44
+- [PWM](https://github.com/pwm-project/pwm) 1.8
 
 You don't need to build full of them. You can build some of them that you want to use.
 
@@ -90,8 +91,9 @@ Usage
   - 1.set locale for redmine
   - 2.download plugins
   - for more details, see [Details of Redmine](#redmine)
-- OpenLDAP
-  - you need nothing to do.
+- OpenLDAP & PWM
+  - 1.set domain-name and admin's password before running ansible-playbook. for more details, see [Details of OpenLDAP](#ldap)
+  - 2.you need to setup PWM (ldap management application) after running ansible-playbook. for more details, see [Details of PWM](#pwm)
 
 ### 4. Install services ###
 
@@ -103,7 +105,7 @@ Details
 ----------------
 ### Gitlab ###
 
-### <a name="redmine_plugins">Redmine</a> ###
+### <a name="redmine">Redmine</a> ###
 
 - About Locale
   - <span style="color:red">Change redmine_locale variablie</span> in  /roles/redmine/vars/main.yml
@@ -149,7 +151,88 @@ Details
     - download redmine_favorite_projects-2_0_3-light.zip, redmine_questions_0_0_7-light.zip and redmine_zenedit-0_0_2-light.zip. Then put these on the directory '/roles/redmine/files/'
   - [RM+](http://rmplus.pro/en) creates cool plugins, but these conflicts with  the backlogs plugin ;-).
 
-### OpenLDAP ###
+### <a name="ldap">LDAP</a> ###
+
+- About Domain-name and password
+  - <span style="color:red">Change following variablie</span> in  /roles/ldap/vars/main.yml
+
+    ```yaml
+    ---
+    # DOMAIN must be the first dc of the SUFFIX.
+    ROOT_PWD: secret
+    DOMAIN: example
+    SUFFIX: dc=example,dc=com
+    ORG: production site
+    ```
+- Settings by ansible-playbook
+  - OpenLDAP 2.3 or higher is OLC(On-Line Configuration). So, we must write settings for OpenLDAP itself to following directory tree.
+    - cn=config
+       - dc=schema
+       - olcDatabase={0}config
+       - olcDatabase={2}bdb
+  - Schema : The playbook set following schema to cn=config,dc=schema
+    - core.schema   (required) : basic attribute. "cn", "ou", etc.
+    - cosine.schema (required) : x500/COSINE tree figure data structure
+    - inetorgperson.schema     : name, group, email, etc.
+    - memberof : memberof overlay. Make OpenLDAP add memberof attribute to the search result of person node like RDB's view-table. For example, if you create admin-gruop and admin-user ichiro, ichiro's memberOf attribute(s) is resolved by OpenLDAP automatically when ldapsearch was invoked.
+
+      ```
+      # admin user
+      dn: cn=ichiro,ou=People,dc=example,dc=com
+      objectClass: inetOrgPerson
+      cn: ichiro
+      sn: suzuki
+      userPassword: ichiro123
+
+      # admin group
+      dn: cn=admin,ou=Group,dc=example,dc=com
+      objectClass: groupOfNames
+      cn: admin
+      member: cn=ichiro,ou=People,dc=example,dc=com
+      ```
+
+      ```shell
+      $ ldapsearch -x -LLL -H ldap:/// -b cn=ichiro,ou=People,dc=example,dc=com dn memberof
+      dn: cn=ichiro,ou=People,dc=example,dc=com
+      memberOf: cn=admin,ou=Group,dc=example,dc=com
+      ```
+  - Data directory : The playbook create following tree
+    - dc=com
+      - dc=example
+        - Group (organizationalUnit)
+          - admin (groupOfNames)
+            - admin.member = cn=ichiro,ou=People,dc=example,dc=com
+        - People (organizationalUnit)
+          - ichiro (inetOrgPerson)
+              - ichiro.userPassword=ichiro123
+          - jiro (inetOrgPerson)
+            - jiro.userPassword=jiro123
+  - Access authentication : The playbook set following access auth settings to olcDatabase={2}bdb.
+
+| Attribute    | User        | Auth         |
+|:-------------|:------------|:------------:|
+| userPassword |cn=Manager,dc=example,dc=com|manage        |
+|              |self         |write         |
+|              |anonymous    |auth          |
+|              |* (other)    |none          |
+| * (other)    |cn=Manager,dc=example,dc=com|manage        |
+|              |self         |write         |
+|              |* (other)    |none          |
+  - Appendex. About typical attibutes
+
+| Attribute    | Note        |
+|:-------------|:------------|
+|dn            |a location of tree. Ex. cn=ichiro,ou=People,dc=example,dc=com|
+|dc            |domain component. Ex. dc=example, dc=com|
+|c             |country|
+|o             |organization. Ex. a company|
+|ou            |organization unit. Ex. a division in the company|
+|cn            |lastname (family-name)|
+|sn            |firstname (given-name)|
+|uid           |user id|
+|userPassword  |password. You shoud store hash value of password. Don't put plain text.|
+
+### <a name="pwm">PWM</a> ###
 
 ### Jenkins ###
 

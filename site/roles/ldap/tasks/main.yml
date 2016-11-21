@@ -39,28 +39,27 @@
   register: add_rootPw
 
 - template:
-    src=add_rootPw.ldif
-    dest=/etc/openldap/init_work/add_rootPw.ldif
+    src={{ item }}
+    dest=/etc/openldap/init_work/{{ item }}
     force=no
-  when: not add_rootPw.stat.exists
-
-- template:
-    src=change_domain.ldif
-    dest=/etc/openldap/init_work/change_domain.ldif
-    force=no
+  with_items:
+    - memberof.ldif
+    - add_rootPw.ldif
+    - change_domain.ldif
   when: not add_rootPw.stat.exists
 
 # core.schema   (required) : basic attribute. "cn", "ou", etc.
 # cosine.schema (required) : x500/COSINE tree figure data structure
-# inetorgperson.schema     : name, gropup, email, etc.
+# inetorgperson.schema     : name, group, email, etc.
 - name: add ldap root password and schema
   command:
     ldapadd -Y EXTERNAL -H ldapi:// -f {{ item }}
   with_items:
-    - /etc/openldap/init_work/add_rootPw.ldif
-    - /etc/openldap/init_work/change_domain.ldif
     - /etc/openldap/schema/cosine.ldif
     - /etc/openldap/schema/inetorgperson.ldif
+    - /etc/openldap/init_work/memberof.ldif
+    - /etc/openldap/init_work/add_rootPw.ldif
+    - /etc/openldap/init_work/change_domain.ldif
   when: not add_rootPw.stat.exists
 
 ###
